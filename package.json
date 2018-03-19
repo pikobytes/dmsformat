@@ -23,5 +23,9 @@
     "babel": "babel src -d babel-build",
     "rollup": "NODE_ENV=production rollup -c",
     "build": "npm-run-all rollup"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/pikobytes/dmsformat/issues"
+  },
+  "homepage": "https://github.com/pikobytes/dmsformat"
 }
