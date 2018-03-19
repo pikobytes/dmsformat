@@ -1,0 +1,20 @@
+{
+  "ignore": [
+    "node_modules/**"
+  ],
+  "env": {
+    "development": {
+      "presets": [
+        "env"
+      ]
+    },
+    "production": {
+      "presets": [
+        ["env", { "modules": false }]
+      ],
+      "plugins": [
+        "external-helpers"
+      ]
+    }
+  }
+}

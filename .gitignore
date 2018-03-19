@@ -1,0 +1,6 @@
+// ide settings files
+.idea
+
+// build files
+/node_modules
+/dist
