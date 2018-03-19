@@ -1,6 +1,6 @@
 # dmsformat
 
-This is a small library which let you transform decimal lon/lat coordinates into dms format and vice versa. Mainly it tries to merge the libraries [formatcoords](https://github.com/nerik/formatcoords) and [parse-dms](https://github.com/gmaclennan/parse-dms) behind a unique API.
+This is a small library which let you transform decimal lon/lat coordinates into dms format and vice versa. Mainly it tries to merge the libraries [formatcoords](https://github.com/nerik/formatcoords) and [parse-dms](https://github.com/gmaclennan/parse-dms) behind a unique API. So credits to [gmaclennan](https://github.com/gmaclennan) and [nerik](https://github.com/nerik).
 
 ## Usage
 
