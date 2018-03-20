@@ -4,7 +4,7 @@ import flow from 'rollup-plugin-flow';
 import resolve from 'rollup-plugin-node-resolve';
 
 export default {
-  input: 'src/index.js',
+  input: 'src/dmsformat.js',
   output: {
     file: 'dist/dmsformat.js',
     format: 'iife',

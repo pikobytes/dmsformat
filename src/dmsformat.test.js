@@ -1,4 +1,4 @@
-import { fromDMS, toDMS } from './index';
+import { fromDMS, toDMS } from './dmsformat';
 
 describe('fromDMS', () => {
   it('Correctly parses DMS pairs with different separators, hemisphere at end', () => {

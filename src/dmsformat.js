@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @type {{degrees: string, minutes: string, seconds: string}}
  */
@@ -176,10 +174,3 @@ export function toDMS(coordinate, optFormatStr = undefined, optOptions = {}) {
 
   return `${lat}${options.latLonSeparator}${lon}`;
 }
-
-// module export
-module.exports = {
-  fromDMS: fromDMS,
-  isDMS: isDMS,
-  toDMS: toDMS,
-};

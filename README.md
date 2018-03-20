@@ -59,7 +59,7 @@ The following values are available for both latitudes and longitudes:
 |latLonSeparator         | The separator to use between the lat and lon values | ' ' `string` |
 |decimalPlaces           | The number of decimal places to return | 5 `number`|
 
-See `src/index.test.js` for more details on what the functions can do.
+See `src/dmsformat.test.js` for more details on what the functions can do.
 
 # Browser support
 IE <= 8 not supported.
