@@ -1,7 +1,7 @@
 {
   "name": "dmsformat",
   "description": "Allows parsing of dms (degrees minutes seconds coordinates) to decimal degress and back. The library is based on the [formatcoords](https://github.com/nerik/formatcoords) and [parse-dms](https://github.com/gmaclennan/parse-dms) libraries and brings them behind a single API.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "index.js",
   "devDependencies": {
     "babel-cli": "^6.26.0",
