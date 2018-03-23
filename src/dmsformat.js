@@ -137,7 +137,7 @@ export function fromDMS(value) {
  * @param {{ latLonSeparator: string, decimalPlaces: number }} optOptions
  * @returns {string}
  */
-export function toDMS(coordinate, optFormatStr = undefined, optOptions = {}) {
+export function toDMS(coordinate, optFormatStr, optOptions) {
   if (coordinate.length !== 2) {
     throw new Error('Not a valid coordinate');
   }
@@ -148,7 +148,7 @@ export function toDMS(coordinate, optFormatStr = undefined, optOptions = {}) {
   const options = Object.assign({
     decimalPlaces: 5,
     latLonSeparator: ' '
-  }, optOptions);
+  }, optOptions !== undefined ? optOptions : {});
   const coordConf = computeCoordinateConfig(coordinate);
 
   const lat = formatFor(format, options, coordConf.latValues, (coordConf.north) ? 'N' : 'S' );
