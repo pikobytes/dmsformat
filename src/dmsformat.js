@@ -155,22 +155,22 @@ export function toDMS(coordinate, optFormatStr, optOptions) {
   const lon = formatFor(format, options, coordConf.lonValues, (coordConf.east) ? 'E' : 'W' );
 
   function formatFor(format, options, values, X) {
-    let formatted = format;
-    formatted = formatted.replace(/DD/g, `${values.degreesInt}${UNITS.degrees}`);
-    formatted = formatted.replace(/dd/g, `${values.degrees.toFixed(options.decimalPlaces)}${UNITS.degrees}`);
-    formatted = formatted.replace(/D/g, `${values.degreesInt}`);
-    formatted = formatted.replace(/d/g, `${values.degrees.toFixed(options.decimalPlaces)}`);
-    formatted = formatted.replace(/MM/g, `${values.minutesInt}${UNITS.minutes}`);
-    formatted = formatted.replace(/mm/g, `${values.minutes.toFixed(options.decimalPlaces)}${UNITS.minutes}`);
-    formatted = formatted.replace(/M/g, `${values.minutesInt}`);
-    formatted = formatted.replace(/m/g, `${values.minutes.toFixed(options.decimalPlaces)}`);
-    formatted = formatted.replace(/ss/g, `${values.seconds.toFixed(options.decimalPlaces)}${UNITS.seconds}`);
-    formatted = formatted.replace(/s/g, `${values.seconds.toFixed(options.decimalPlaces)}`);
+    var formatted = format;
+    formatted = formatted.replace(/DD/g, values.degreesInt+UNITS.degrees);
+    formatted = formatted.replace(/dd/g, values.degrees.toFixed(options.decimalPlaces)+UNITS.degrees);
+    formatted = formatted.replace(/D/g, values.degreesInt);
+    formatted = formatted.replace(/d/g, values.degrees.toFixed(options.decimalPlaces));
+    formatted = formatted.replace(/MM/g, values.minutesInt+UNITS.minutes);
+    formatted = formatted.replace(/mm/g, values.minutes.toFixed(options.decimalPlaces)+UNITS.minutes);
+    formatted = formatted.replace(/M/g, values.minutesInt);
+    formatted = formatted.replace(/m/g, values.minutes.toFixed(options.decimalPlaces));
+    formatted = formatted.replace(/ss/g, values.seconds.toFixed(options.decimalPlaces)+UNITS.seconds);
+    formatted = formatted.replace(/s/g, values.seconds.toFixed(options.decimalPlaces));
     formatted = formatted.replace(/-/g, (values.initValue<0) ? '-' : '');
     formatted = formatted.replace(/X/g, X);
 
     return formatted;
   }
 
-  return `${lat}${options.latLonSeparator}${lon}`;
+  return lat + options.latLonSeparator + lon;
 }
