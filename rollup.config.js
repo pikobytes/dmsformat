@@ -7,7 +7,7 @@ export default {
   input: 'src/dmsformat.js',
   output: {
     file: 'dist/dmsformat.js',
-    format: 'iife',
+    format: 'cjs',
     name: 'dmsformat',
     sourcemap: 'inline',
   },
