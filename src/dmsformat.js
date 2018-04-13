@@ -8,6 +8,13 @@ const UNITS = {
 };
 
 /**
+ * @type {{PARSE_STRING: string}}
+ */
+const ERRORS = {
+  PARSE_STRING: 'Could not parse string',
+};
+
+/**
  * @type {{-: number, N: number, S: number, E: number, W: number}}
  */
 const SIGN_INDEX = {
@@ -33,6 +40,15 @@ const DMS_REGREX = /([NSEW])?(-)?(\d+(?:\.\d+)?)[°º:d\s]?\s?(?:(\d+(?:\.\d+)?)
  */
 function inRange(value, a, b) {
   return value >= a && value <= b;
+}
+
+/**
+ * Checks if the given value is of type number
+ * @param {*} v
+ * @returns {boolean}
+ */
+function isNumber(v) {
+  return typeof v == 'number' && !isNaN(v);
 }
 
 /**
@@ -90,15 +106,48 @@ function computeCoordinateConfig(coordinate) {
 }
 
 /**
- * Function checks if a string is a dms string. This function also returns true in case only a part lat/lon
- * is written as a dms. Currently the _fromDMS_ does only support full dms string.
+ * Converts grad and decimal minutes to a [lon, lat] coordinate. The function expects coordinates
+ * to be in the form `41 24.2028, -2 10.4418` (lat, lon - order) and a comma as an seperator
+ *
  * @param {string} value
- * @returns {boolean}
+ * @returns {[number,number]} [lon, lat]
+ * @throws
  */
-export function isDMS(value) {
+export function fromGMM(value) {
+  function errorFn(errorMsg) {
+    throw new Error(errorMsg);
+  }
+  const seperator = ',';
   const v = value.trim();
-  const matchLat = v.match(DMS_REGREX);
-  return !matchLat ? false : true;
+
+  // check if seperator exists
+  if (v.indexOf(seperator) === -1) { return errorFn(ERRORS.PARSE_STRING); }
+
+  const parts = v.split(',');
+  if (parts.length !== 2) { return errorFn(ERRORS.PARSE_STRING); }
+
+  // try to parse lat coordinate
+  const orientationLat = parts[0].trim().substring(0, 1) === '-' ? -1 : 1;
+  const partsLat = parts[0].trim().split(' ');
+  const decimalGradLat = orientationLat === -1 ? parseFloat(partsLat[0].replace('-', '')) : parseFloat(partsLat[0]);
+  const decimalMinutesLat = partsLat.length > 1 ? parseFloat(partsLat[1]) : 0;
+  const valueLat = isNumber(decimalGradLat) && isNumber(decimalMinutesLat)
+    ? orientationLat * (decimalGradLat + decimalMinutesLat / 60)
+    : undefined;
+
+  // try to parse lon coordinate
+  const orientationLon = parts[1].trim().substring(0, 1) === '-' ? -1 : 1;
+  const partsLon = parts[1].trim().split(' ');
+  const decimalGradLon = orientationLon === -1 ? parseFloat(partsLon[0].replace('-', '')) : parseFloat(partsLon[0]);
+  const decimalMinutesLon = partsLon.length > 1 ? parseFloat(partsLon[1]) : 0;
+  const valueLon = isNumber(decimalGradLon) && isNumber(decimalMinutesLon)
+    ? orientationLon * (decimalGradLon + decimalMinutesLon / 60)
+    : undefined;
+
+  if (!isNumber(valueLon) || !isNumber(valueLat)) { return errorFn(ERRORS.PARSE_STRING); }
+  if (!inRange(valueLon, -180, 180) || !inRange(valueLat, -90, 90)) { return errorFn('Lon/Lat values out of range'); }
+
+  return [valueLon, valueLat];
 }
 
 /**
@@ -113,7 +162,7 @@ export function fromDMS(value) {
   const matchLat = v.match(DMS_REGREX);
 
   if (!matchLat) {
-    throw new Error('Could not parse string');
+    throw new Error(ERRORS.PARSE_STRING);
   }
 
   // If dmsString starts with a hemisphere letter, then the regex can also capture the
@@ -124,11 +173,12 @@ export function fromDMS(value) {
   const matchLon = lonString.match(DMS_REGREX);
 
   if (!matchLon) {
-    throw new Error('Could not parse string');
+    throw new Error(ERRORS.PARSE_STRING);
   }
 
   return [decDegFromMatch(matchLon), decDegFromMatch(matchLat)];
 }
+
 
 /**
  * Returns a dms string for a given coordinate

@@ -1,4 +1,4 @@
-import { fromDMS, toDMS } from './dmsformat';
+import { fromDMS, fromGMM, toDMS } from './dmsformat';
 
 describe('fromDMS', () => {
   it('Correctly parses DMS pairs with different separators, hemisphere at end', () => {
@@ -271,5 +271,78 @@ describe('vice versa toDMS and fromDMS', () => {
     expect(toDMS(coordinate)).toBe(expectedDMS);
     expect(fromDMS(expectedDMS)[0]).toBe(coordinate[0]);
     expect(fromDMS(expectedDMS)[1]).toBe(coordinate[1]);
+  });
+});
+
+describe('fromGMM', () => {
+  it('Correctly parses DMM pair with comma separator', () => {
+    const testData = [
+      '41 24.2028, -2 10.4418',
+      '41.40338, -2.17403',
+    ];
+
+    const expected = [
+      -1 * (2 + 10.4418 / 60),
+      41 + 24.2028 / 60,
+    ];
+
+    testData.forEach((v) => {
+      const subject = fromGMM(v);
+      expect(subject[0]).toBe(expected[0]);
+      expect(subject[1]).toBe(expected[1]);
+    });
+  });
+
+  it('Throws for invalid data', () => {
+    const testData = [
+      'Not DMS string',
+      '59° 12\' 7.7" N 02° 15\' 39.6" W',
+      '41°24\'12.2"N 2°10\'26.5"E'
+    ];
+
+    testData.forEach((v) => {
+      expect(() => fromGMM(v)).toThrow(Error, 'Could not parse string');
+    });
+  });
+});
+
+describe('Tests if the parsings functions are working like expected for an autocomplete case - DMM', () => {
+  it('Throws errors or returns invalid data', () => {
+    const testData = [
+      '4',
+      '41',
+      '41 ',
+      '41 2',
+      '41 24',
+      '41 24.',
+      '41 24.2',
+      '41 24.20',
+      '41 24.202',
+      '41 24.2028',
+      '41 24.2028,',
+      '41 24.2028, ',
+      '41 24.2028, -',
+    ];
+
+    testData.forEach((v) => {
+      expect(() => fromGMM(v)).toThrow(Error, 'Could not parse string');
+    });
+  });
+
+  it('Parses the data correctly', () => {
+    const testData = [
+      '41 24.2028, -2',
+      '41 24.2028, -2 ',
+      '41 24.2028, -2 1',
+      '41 24.2028, -2 10',
+      '41 24.2028, -2 10.',
+      '41 24.2028, -2 10.4',
+    ];
+
+    testData.forEach((v) => {
+      const subject = fromGMM(v);
+      expect(typeof subject[0] == 'number').toBe(true);
+      expect(typeof subject[1] == 'number').toBe(true);
+    });
   });
 });
