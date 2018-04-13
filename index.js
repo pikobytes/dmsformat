@@ -1,1 +1,1 @@
-export { toDMS, fromDMS, isDMS } from "./src/dmsformat";
+export { toDMS, fromDMS, fromGMM } from "./src/dmsformat";
