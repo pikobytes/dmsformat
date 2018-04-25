@@ -113,7 +113,7 @@ function computeCoordinateConfig(coordinate) {
  * @returns {[number,number]} [lon, lat]
  * @throws
  */
-export function fromGMM(value) {
+export function fromGDM(value) {
   function errorFn(errorMsg) {
     throw new Error(errorMsg);
   }

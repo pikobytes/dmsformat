@@ -1,4 +1,4 @@
-import { fromDMS, fromGMM, toDMS } from './dmsformat';
+import { fromDMS, fromGDM, toDMS } from './dmsformat';
 
 describe('fromDMS', () => {
   it('Correctly parses DMS pairs with different separators, hemisphere at end', () => {
@@ -274,7 +274,7 @@ describe('vice versa toDMS and fromDMS', () => {
   });
 });
 
-describe('fromGMM', () => {
+describe('fromGDM', () => {
   it('Correctly parses DMM pair with comma separator', () => {
     const testData = [
       '41 24.2028, -2 10.4418',
@@ -287,7 +287,7 @@ describe('fromGMM', () => {
     ];
 
     testData.forEach((v) => {
-      const subject = fromGMM(v);
+      const subject = fromGDM(v);
       expect(subject[0]).toBe(expected[0]);
       expect(subject[1]).toBe(expected[1]);
     });
@@ -301,7 +301,7 @@ describe('fromGMM', () => {
     ];
 
     testData.forEach((v) => {
-      expect(() => fromGMM(v)).toThrow(Error, 'Could not parse string');
+      expect(() => fromGDM(v)).toThrow(Error, 'Could not parse string');
     });
   });
 });
@@ -325,7 +325,7 @@ describe('Tests if the parsings functions are working like expected for an autoc
     ];
 
     testData.forEach((v) => {
-      expect(() => fromGMM(v)).toThrow(Error, 'Could not parse string');
+      expect(() => fromGDM(v)).toThrow(Error, 'Could not parse string');
     });
   });
 
@@ -340,7 +340,7 @@ describe('Tests if the parsings functions are working like expected for an autoc
     ];
 
     testData.forEach((v) => {
-      const subject = fromGMM(v);
+      const subject = fromGDM(v);
       expect(typeof subject[0] == 'number').toBe(true);
       expect(typeof subject[1] == 'number').toBe(true);
     });
