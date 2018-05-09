@@ -1,4 +1,4 @@
-import { fromDMS, fromGDM, toDMS } from './dmsformat';
+import { fromDMS, fromDMM, isDMM, isDMS, toDMS } from './dmsformat';
 
 describe('fromDMS', () => {
   it('Correctly parses DMS pairs with different separators, hemisphere at end', () => {
@@ -234,6 +234,24 @@ describe('fromDMS', () => {
       expect(subject[1]).toBe(expected[1]);
     });
   });
+
+  it('Parse DMS in Google Syntax', () => {
+    const testData = [
+      '41°24\'12.2"N 2°10\'26.5"E',
+      '41°24\'12.2"N,2°10\'26.5"E',
+    ];
+
+    const expected = [
+      2 + 10 / 60 + 26.5 / 3600,
+      41 + 24 / 60 + 12.2/ 3600
+    ];
+
+    testData.forEach((v) => {
+      const subject = fromDMS(v);
+      expect(subject[0]).toBe(expected[0]);
+      expect(subject[1]).toBe(expected[1]);
+    });
+  });
 });
 
 describe('toDMS', () => {
@@ -274,7 +292,7 @@ describe('vice versa toDMS and fromDMS', () => {
   });
 });
 
-describe('fromGDM', () => {
+describe('fromDMM', () => {
   it('Correctly parses DMM pair with comma separator', () => {
     const testData = [
       '41 24.2028, -2 10.4418',
@@ -287,7 +305,7 @@ describe('fromGDM', () => {
     ];
 
     testData.forEach((v) => {
-      const subject = fromGDM(v);
+      const subject = fromDMM(v);
       expect(subject[0]).toBe(expected[0]);
       expect(subject[1]).toBe(expected[1]);
     });
@@ -301,7 +319,7 @@ describe('fromGDM', () => {
     ];
 
     testData.forEach((v) => {
-      expect(() => fromGDM(v)).toThrow(Error, 'Could not parse string');
+      expect(() => fromDMM(v)).toThrow(Error, 'Could not parse string');
     });
   });
 });
@@ -325,7 +343,7 @@ describe('Tests if the parsings functions are working like expected for an autoc
     ];
 
     testData.forEach((v) => {
-      expect(() => fromGDM(v)).toThrow(Error, 'Could not parse string');
+      expect(() => fromDMM(v)).toThrow(Error, 'Could not parse string');
     });
   });
 
@@ -340,9 +358,56 @@ describe('Tests if the parsings functions are working like expected for an autoc
     ];
 
     testData.forEach((v) => {
-      const subject = fromGDM(v);
+      const subject = fromDMM(v);
       expect(typeof subject[0] == 'number').toBe(true);
       expect(typeof subject[1] == 'number').toBe(true);
+    });
+  });
+});
+
+describe('#isDMM()', () => {
+  it('isDMM returns true for supported syntax', () => {
+    const testData = [
+      '41 24.2028, 2 10.4418',
+      '41.40338, 2.17403',
+    ];
+
+    testData.forEach((v) => {
+      expect(isDMM(v)).toBe(true);
+    });
+  });
+
+  it('isDMS returns false for not supported syntax', () => {
+    const testData = [
+      '41°24\'12.2"N 2°10\'26.5"E',
+    ];
+
+    testData.forEach((v) => {
+      expect(isDMM(v)).toBe(false);
+    });
+  });
+});
+
+describe('#isDMS()', () => {
+  it('isDMS returns true for supported syntax', () => {
+    const testData = [
+      '41°24\'12.2"N 2°10\'26.5"E',
+      '41°24\'12.2"N,2°10\'26.5"E',
+    ];
+
+    testData.forEach((v) => {
+      expect(isDMS(v)).toBe(true);
+    });
+  });
+
+  it('isDMS returns false for not supported syntax', () => {
+    const testData = [
+      '41 24.2028, 2 10.4418',
+      '41.40338, 2.17403',
+    ];
+
+    testData.forEach((v) => {
+      expect(isDMS(v)).toBe(false);
     });
   });
 });

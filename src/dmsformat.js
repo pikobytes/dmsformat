@@ -32,6 +32,13 @@ const SIGN_INDEX = {
 const DMS_REGREX = /([NSEW])?(-)?(\d+(?:\.\d+)?)[°º:d\s]?\s?(?:(\d+(?:\.\d+)?)['’‘′:]\s?(?:(\d{1,2}(?:\.\d+)?)(?:"|″|’’|'')?)?)?\s?([NSEW])?/i;
 
 /**
+ * RegEx for checking if a given string contain any special characters which allows
+ * exclude it to have a DMM or DD syntax.
+ * @type {RegExp}
+ */
+const DOES_CONTAIN_SPECIAL_CHARS = /[NSEW°'’‘′:"″]/g;
+
+/**
  * Check if the given value is within the allowed range
  * @param {number} value
  * @param {number} a
@@ -113,7 +120,7 @@ function computeCoordinateConfig(coordinate) {
  * @returns {[number,number]} [lon, lat]
  * @throws
  */
-export function fromGDM(value) {
+export function fromDMM(value) {
   function errorFn(errorMsg) {
     throw new Error(errorMsg);
   }
@@ -179,6 +186,45 @@ export function fromDMS(value) {
   return [decDegFromMatch(matchLon), decDegFromMatch(matchLat)];
 }
 
+/**
+ * Checks if a given string value is compliant to the Degrees and decimal minutes (DMM)
+ * syntax or decimal degrees syntax. Both are handle by the library through DMM functions.
+ * Syntax examples are:
+ *
+ * 41 24.2028, 2 10.4418 (DMM)
+ * 41.40338, 2.17403 (DD)
+ *
+ * Is it possible that fromDMM also returns valid, but wrong coordinates for a given
+ * DMS syntax. To filter out this cases we also do a DOES_CONTAIN_SPECIAL_CHARS check.
+ * @param {string} value
+ * @returns {boolean}
+ */
+export function isDMM(value) {
+  try {
+    const v = fromDMM(value);
+    return v.length === 2 && v[0] !== undefined && v[1] !== undefined && !DOES_CONTAIN_SPECIAL_CHARS.test(value);
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * Checks if a given string value is compliant to the Degrees, minutes and seconds (DMS)
+ * syntax supported through this library, e.g.:
+ *
+ * 41°24'12.2"N 2°10'26.5"E
+ *
+ * @param {string} value
+ * @returns {boolean}
+ */
+export function isDMS(value) {
+  try {
+    const v = fromDMS(value);
+    return v.length === 2 && v[0] !== undefined && v[1] !== undefined && !isDMM(value);
+  } catch (e) {
+    return false;
+  }
+}
 
 /**
  * Returns a dms string for a given coordinate
@@ -205,7 +251,7 @@ export function toDMS(coordinate, optFormatStr, optOptions) {
   const lon = formatFor(format, options, coordConf.lonValues, (coordConf.east) ? 'E' : 'W' );
 
   function formatFor(format, options, values, X) {
-    var formatted = format;
+    let formatted = format;
     formatted = formatted.replace(/DD/g, values.degreesInt+UNITS.degrees);
     formatted = formatted.replace(/dd/g, values.degrees.toFixed(options.decimalPlaces)+UNITS.degrees);
     formatted = formatted.replace(/D/g, values.degreesInt);
